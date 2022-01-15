@@ -27,7 +27,7 @@
 // import firebase from "firebase/compat/app"
 
 // import firebase from '~/plugins/firebase';
-import { getFirestore, getDocs, addDoc, collection} from 'firebase/firestore';
+import { doc, getFirestore, getDocs, addDoc, collection, updateDoc} from 'firebase/firestore';
 import 'firebase/firestore';
 
 export default {
@@ -77,9 +77,35 @@ export default {
     },
 
     async updateTodo(todo, key) {
-      const db = getFirestore();
-      todo.judge = !todo.judge
-      this.collection(db, 'todos').doc(key).update(todo)
+
+      try{
+        const db = getFirestore();
+        todo.judge = !todo.judge
+        
+        // collection(db, 'todos').doc(key).update(todo);
+        // console.log("judge");
+        // console.log(todo.judge);
+  
+        // updateDoc(collection(db, 'todos'))
+
+        const docRef = doc(db, "todos", key);
+        console.log(todo.judge);
+        console.log(docRef);
+
+        const docSnap = await updateDoc(docRef);
+
+        if (docSnap.exists()) {
+          todo.judge = !todo.judge
+          console.log("Document data:", docSnap.data());
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+        }
+
+
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
