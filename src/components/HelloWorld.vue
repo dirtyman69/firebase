@@ -6,7 +6,7 @@
 
   <div>
     <input v-model="NewTodoName"/>
-    <button @click="addTodo()">追加</button>
+    <button @click="addData()">追加</button>
   </div>
 
   <ul>
@@ -21,9 +21,12 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-
+// import firebase from 'firebase'
 // import firebase from "firebase/compat/app"
+
+import firebase from '~/plugins/firebase';
+import { Firestore, getFirestore, getDocs, collection, QueryDocumentSnapshot } from 'firebase/firestore';
+import 'firebase/firestore';
 
 export default {
   name: 'HelloWorld',
@@ -40,17 +43,27 @@ export default {
   },
 
   created(){
-    this.db = firebase.firestore()
-    this.todosRef = this.db.collection("todos")
+    // this.db = firebase.firestore()
+    // this.todosRef = this.db.collection("todos")
+
+    const db: Firestore = getFirestore(firebaseApp); // Firestore のインスタンスを初期化
+
+      if (!db) { return; }
+    getDocs(collection(db, 'hoge'))
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc: QueryDocumentSnapshot) => {
+          console.log(doc.data())
+        });
+      });
   },
 
   methods: {
-    addTodo(){
-      if(this.NewTodoName === ''){ return }
-      this.todosRef.add({
-        name: this.NewTodoName,
-        isComplete: false
-      })
+    addData () {
+      const db: Firestore = getFirestore(firebaseApp);
+      await addDoc(collection(db, 'hoge'), {
+        name: 'deren',
+        country: 'Japan'
+      });
     }
   }
 }
